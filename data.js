@@ -147,6 +147,7 @@ const AGENTS = [
   }
 ];
 
+// Current map pool
 const MAPS = [
   {
     "id": "abyss",
@@ -157,36 +158,12 @@ const MAPS = [
     "name": "Ascent"
   },
   {
-    "id": "bind",
-    "name": "Bind"
-  },
-  {
-    "id": "breeze",
-    "name": "Breeze"
-  },
-  {
-    "id": "corrode",
-    "name": "Corrode"
-  },
-  {
-    "id": "fracture",
-    "name": "Fracture"
-  },
-  {
     "id": "haven",
     "name": "Haven"
   },
   {
-    "id": "icebox",
-    "name": "Icebox"
-  },
-  {
     "id": "lotus",
     "name": "Lotus"
-  },
-  {
-    "id": "pearl",
-    "name": "Pearl"
   },
   {
     "id": "split",

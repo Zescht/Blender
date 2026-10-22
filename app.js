@@ -22,9 +22,15 @@
   const poolGrid = $('#pool-grid');
   const poolTarget = $('#pool-target');
   const search = $('#search');
+  const tabs = $('#map-tabs');
+  const sheetComp = $('#sheet-comp');
+  const cta = $('#m-cta');
+  const phone = matchMedia('(max-width: 700px)');
 
   let filter = { role: 'All', q: '' };
   let state = load();
+  // Map shown on phones, where only one map is visible at a time.
+  let view = mapOf(state.active);
 
   function blank() {
     return {
@@ -131,7 +137,7 @@
       const mapId = state.maps[n - 1];
       const banner = mapId ? ` style="--banner:url('assets/maps/${mapId}.png')"` : '';
       return `
-        <div class="col">
+        <div class="col${n === view ? ' shown' : ''}">
           <div class="col-head"${banner}>
             <div class="map-title"><span class="map-no">Map 0${n}</span><span class="map-role">${MAP_ROLE[n - 1]}</span></div>
             ${renderMapSelect(n - 1)}
@@ -192,9 +198,59 @@
       }).join('') || '<p class="muted">No agent matches.</p>';
   }
 
+  /* ---------- Phone UI ---------- */
+
+  const isDone = c => state.comps[c].length >= SIZE;
+  const allDone = () => ORDER.every(isDone);
+
+  function renderTabs() {
+    tabs.innerHTML = [1, 2, 3].map(n => {
+      const mapId = state.maps[n - 1];
+      const picked = state.comps['A' + n].length + state.comps['B' + n].length;
+      const cls = ['tab', n === view && 'on', picked === 2 * SIZE && 'done'].filter(Boolean).join(' ');
+      return `<button type="button" class="${cls}" data-map="${n}">
+          <b>Map ${n}</b>
+          <small>${mapId ? esc(mapById[mapId].name) : MAP_ROLE[n - 1]} · <span class="prog">${picked}/${2 * SIZE}</span></small>
+        </button>`;
+    }).join('');
+  }
+
+  function renderSheetComp() {
+    const comp = state.active;
+    const list = state.comps[comp];
+    const ban = banned(comp);
+    let html = '';
+    for (let i = 0; i < SIZE; i++) {
+      const id = list[i];
+      html += id
+        ? `<button type="button" class="slot filled${ban.has(id) ? ' conflict' : ''}" data-idx="${i}" title="Remove ${esc(agentById[id].name)}"><img src="${icon(id)}" alt="${esc(agentById[id].name)}"></button>`
+        : '<span class="slot"></span>';
+    }
+    sheetComp.innerHTML = html;
+  }
+
+  function renderCta() {
+    const comp = state.active;
+    cta.classList.toggle('all-done', allDone());
+    cta.innerHTML = allDone()
+      ? 'Draft complete <span>Edit picks</span>'
+      : `Pick for ${esc(teamName(teamOf(comp)))} <span>Map ${mapOf(comp)} · ${state.comps[comp].length}/${SIZE}</span>`;
+  }
+
+  function openSheet() {
+    document.body.classList.add('sheet-open');
+  }
+
+  function closeSheet() {
+    document.body.classList.remove('sheet-open');
+  }
+
   function render() {
     renderBoard();
     renderPool();
+    renderTabs();
+    renderSheetComp();
+    renderCta();
     save();
   }
 
@@ -218,7 +274,18 @@
       if (banned(comp).has(id)) return toast(`${agentById[id].name} is banned: ${banReason(comp)}`);
       if (list.length >= SIZE) return toast('This comp is full. Remove an agent first.');
       list.push(id);
-      if (list.length === SIZE) state.active = nextOpenComp(comp);
+      if (list.length === SIZE) {
+        state.active = nextOpenComp(comp);
+        view = mapOf(state.active);
+        if (phone.matches) {
+          if (allDone()) {
+            closeSheet();
+            toast('Draft complete');
+          } else {
+            toast(`Next: ${teamName(teamOf(state.active))} · Map ${mapOf(state.active)}`);
+          }
+        }
+      }
     }
     render();
   }
@@ -256,10 +323,11 @@
     const compEl = e.target.closest('.comp');
     if (!compEl) return;
     const comp = compEl.dataset.comp;
-    if (slot && slot.classList.contains('filled')) {
-      state.comps[comp].splice(Number(slot.dataset.idx), 1);
-    }
+    const removing = slot && slot.classList.contains('filled');
+    if (removing) state.comps[comp].splice(Number(slot.dataset.idx), 1);
     state.active = comp;
+    view = mapOf(comp);
+    if (phone.matches && !removing) openSheet();
     render();
   });
 
@@ -300,14 +368,46 @@
     }
   });
 
-  for (const t of ['A', 'B']) {
-    const input = $(`#name-${t}`);
+  // Team names are editable in two places (desktop label column, phone bar); keep them in sync.
+  const nameInputs = [...document.querySelectorAll('.team-name')];
+  for (const input of nameInputs) {
+    const t = input.dataset.name;
     input.value = state.names[t];
     input.addEventListener('input', () => {
       state.names[t] = input.value;
+      for (const other of nameInputs) if (other !== input && other.dataset.name === t) other.value = input.value;
       render();
     });
   }
+
+  tabs.addEventListener('click', e => {
+    const tab = e.target.closest('.tab');
+    if (!tab) return;
+    view = Number(tab.dataset.map);
+    if (mapOf(state.active) !== view) {
+      state.active = ['A', 'B'].map(t => t + view).find(c => !isDone(c)) || 'A' + view;
+    }
+    render();
+  });
+
+  sheetComp.addEventListener('click', e => {
+    const slot = e.target.closest('.slot.filled');
+    if (!slot) return;
+    state.comps[state.active].splice(Number(slot.dataset.idx), 1);
+    render();
+  });
+
+  cta.addEventListener('click', () => {
+    view = mapOf(state.active);
+    render();
+    openSheet();
+  });
+  $('#sheet-close').addEventListener('click', closeSheet);
+  $('#backdrop').addEventListener('click', closeSheet);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeSheet();
+  });
+  phone.addEventListener('change', closeSheet);
 
   $('#rules-btn').addEventListener('click', () => $('#rules').showModal());
 

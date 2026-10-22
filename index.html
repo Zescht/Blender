@@ -24,28 +24,43 @@
   </header>
 
   <main>
+    <div class="m-bar">
+      <div class="m-names">
+        <label><span>A</span><input class="team-name" data-name="A" maxlength="24" aria-label="Team A name"></label>
+        <label><span>B</span><input class="team-name" data-name="B" maxlength="24" aria-label="Team B name"></label>
+      </div>
+      <nav class="map-tabs" id="map-tabs" aria-label="Maps"></nav>
+    </div>
+
     <section class="board" aria-label="Draft board">
       <div class="col col-labels">
         <div class="col-head"></div>
         <div class="band band-a">
           <span class="team-letter">A</span>
-          <input class="team-name" id="name-A" maxlength="24" aria-label="Team A name">
+          <input class="team-name" data-name="A" maxlength="24" aria-label="Team A name">
         </div>
         <div class="band band-b">
           <span class="team-letter">B</span>
-          <input class="team-name" id="name-B" maxlength="24" aria-label="Team B name">
+          <input class="team-name" data-name="B" maxlength="24" aria-label="Team B name">
         </div>
       </div>
       <div id="map-cols" class="map-cols"></div>
     </section>
 
-    <section class="pool" aria-label="Agent pool">
-      <div class="pool-head">
-        <div class="pool-target" id="pool-target"></div>
-        <div class="pool-tools">
-          <div class="chips" id="role-chips"></div>
-          <input type="search" id="search" class="search" placeholder="Search agent" aria-label="Search agent">
+    <section class="pool" id="pool" aria-label="Agent pool">
+      <div class="pool-top">
+        <div class="sheet-head">
+          <span class="grab"></span>
+          <button type="button" class="sheet-close" id="sheet-close" aria-label="Close">Done</button>
         </div>
+        <div class="pool-head">
+          <div class="pool-target" id="pool-target"></div>
+          <div class="pool-tools">
+            <div class="chips" id="role-chips"></div>
+            <input type="search" id="search" class="search" placeholder="Search agent" aria-label="Search agent">
+          </div>
+        </div>
+        <div class="sheet-comp slots" id="sheet-comp"></div>
       </div>
       <div id="pool-grid" class="pool-grid"></div>
     </section>
@@ -63,6 +78,9 @@
     <p class="muted">Source: <a href="https://www.project-blender.com/en/faq" target="_blank" rel="noopener">project-blender.com/en/faq</a></p>
     <form method="dialog"><button class="btn">Close</button></form>
   </dialog>
+
+  <div class="backdrop" id="backdrop"></div>
+  <button type="button" class="m-cta" id="m-cta"></button>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
