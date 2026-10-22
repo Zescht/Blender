@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blender Draft Simulator</title>
+  <link rel="icon" href="assets/roles/duelist.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="title">
+      <h1>Blender Draft</h1>
+      <span class="sub">Composition simulator</span>
+    </div>
+    <div class="actions">
+      <button type="button" id="rules-btn" class="btn">Rules</button>
+      <button type="button" id="copy-btn" class="btn">Copy as text</button>
+      <button type="button" id="reset-btn" class="btn btn-danger">Reset</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="board" aria-label="Draft board">
+      <div class="col col-labels">
+        <div class="col-head"></div>
+        <div class="band band-a">
+          <span class="team-letter">A</span>
+          <input class="team-name" id="name-A" maxlength="24" aria-label="Team A name">
+        </div>
+        <div class="band band-b">
+          <span class="team-letter">B</span>
+          <input class="team-name" id="name-B" maxlength="24" aria-label="Team B name">
+        </div>
+      </div>
+      <div id="map-cols" class="map-cols"></div>
+    </section>
+
+    <section class="pool" aria-label="Agent pool">
+      <div class="pool-head">
+        <div class="pool-target" id="pool-target"></div>
+        <div class="pool-tools">
+          <div class="chips" id="role-chips"></div>
+          <input type="search" id="search" class="search" placeholder="Search agent" aria-label="Search agent">
+        </div>
+      </div>
+      <div id="pool-grid" class="pool-grid"></div>
+    </section>
+  </main>
+
+  <dialog id="rules" class="rules">
+    <h2>Blender Draft rules</h2>
+    <p>Best of 3. The coin-toss winner is <b>Team A</b> and picks Map 1; Team B picks Map 2; Map 3 is the decider.</p>
+    <ul>
+      <li><span class="dot dot-grey"></span><b>Team A, Map 1 comp</b> is banned for Team A on <b>Map 2 and Map 3</b>.</li>
+      <li><span class="dot dot-green"></span><b>Team B, Map 1 comp</b> is banned for Team B on <b>Map 2</b> only.</li>
+      <li><span class="dot dot-red"></span><b>Team B, Map 2 comp</b> is banned for Team B on <b>Map 3</b>.</li>
+      <li>Bans only apply to the team that played the comp. The other team can still pick those agents.</li>
+    </ul>
+    <p class="muted">Source: <a href="https://www.project-blender.com/en/faq" target="_blank" rel="noopener">project-blender.com/en/faq</a></p>
+    <form method="dialog"><button class="btn">Close</button></form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
