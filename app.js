@@ -409,9 +409,12 @@
   });
   phone.addEventListener('change', closeSheet);
 
-  $('#rules-btn').addEventListener('click', () => $('#rules').showModal());
+  // Action buttons exist twice: in the board corner (desktop) and in the header (smaller screens).
+  const onAction = (name, fn) => document.querySelectorAll(`[data-action="${name}"]`).forEach(b => b.addEventListener('click', fn));
 
-  $('#reset-btn').addEventListener('click', () => {
+  onAction('rules', () => $('#rules').showModal());
+
+  onAction('reset', () => {
     if (!confirm('Clear all comps and maps?')) return;
     const names = state.names;
     state = blank();
@@ -419,7 +422,7 @@
     render();
   });
 
-  $('#copy-btn').addEventListener('click', async () => {
+  onAction('copy', async () => {
     try {
       await navigator.clipboard.writeText(asText());
       toast('Draft copied to clipboard');

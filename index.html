@@ -17,9 +17,9 @@
       <span class="sub">Composition simulator</span>
     </div>
     <div class="actions">
-      <button type="button" id="rules-btn" class="btn">Rules</button>
-      <button type="button" id="copy-btn" class="btn">Copy as text</button>
-      <button type="button" id="reset-btn" class="btn btn-danger">Reset</button>
+      <button type="button" data-action="rules" class="btn">Rules</button>
+      <button type="button" data-action="copy" class="btn">Copy as text</button>
+      <button type="button" data-action="reset" class="btn btn-danger">Reset</button>
     </div>
   </header>
 
@@ -40,7 +40,11 @@
     </div>
     <section class="board" aria-label="Draft board">
       <div class="col col-labels">
-        <div class="col-head"></div>
+        <div class="col-head corner-actions">
+          <button type="button" data-action="rules">Rules</button>
+          <button type="button" data-action="copy">Copy</button>
+          <button type="button" data-action="reset" class="danger">Reset</button>
+        </div>
         <div class="band band-a">
           <span class="team-letter">A</span>
           <input class="team-name" data-name="A" maxlength="24" aria-label="Team A name">

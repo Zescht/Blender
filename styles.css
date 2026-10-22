@@ -405,11 +405,37 @@ main { padding: 0 24px 32px; }
 .board { position: relative; z-index: 1; }
 .peekers { display: none; }
 
-@media (min-width: 1500px) {
-  .top { padding-top: 28px; }
+/* Desktop: actions live in the board's empty top-left cell, so the header row only holds the title */
+.corner-actions { display: grid; grid-template-columns: 1fr 1fr; align-content: center; gap: 6px; padding: 12px; }
+.corner-actions button {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: transparent;
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 5px 0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.corner-actions button:hover { background: #fff; color: var(--ink); }
+.corner-actions .danger { grid-column: 1 / -1; border-color: var(--accent); color: var(--accent); }
+.corner-actions .danger:hover { background: var(--accent); color: #fff; }
+
+@media (min-width: 1001px) {
+  .top .actions { display: none; }
+}
+
+/* Stickers are sized and placed purely relative to the board width, so they stay put at any zoom level */
+@media (min-width: 1340px) {
+  .board-wrap { container-type: inline-size; }
+  .top {
+    padding-top: 28px;
+    /* Keep room above the board for the visible part of the stickers */
+    min-height: calc((100vw - 48px) * 0.062);
+  }
   .title { flex-direction: column; align-items: flex-start; gap: 6px; }
   .peekers {
-    --peek-h: clamp(130px, 9vw, 172px);
+    --peek-h: 9.3cqw;
     display: block;
     position: absolute;
     top: 0;
@@ -430,12 +456,9 @@ main { padding: 0 24px 32px; }
   }
   .peek:hover { translate: 0 -8px; }
   /* 1 and 3 have less headroom in their image than 2; scale them so all three tops line up */
-  .peek-1 { --scale: 0.89; }
-  .peek-3 { --scale: 0.945; }
-  /* Positions follow the map columns; clamped so they stay clear of the title and buttons */
-  .peek-1 { left: max(33%, 560px); animation-delay: 0.1s; }
-  .peek-2 { left: min(64.5%, calc(100% - 610px)); animation-delay: 0.25s; }
-  .peek-3 { left: min(78%, calc(100% - 400px)); animation-delay: 0.4s; }
+  .peek-1 { --scale: 0.89; left: 33%; animation-delay: 0.1s; }
+  .peek-2 { left: 64.5%; animation-delay: 0.25s; }
+  .peek-3 { --scale: 0.945; left: 78%; animation-delay: 0.4s; }
 }
 
 @keyframes peek-up {
