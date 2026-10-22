@@ -400,6 +400,9 @@ main { padding: 0 24px 32px; }
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* Map select row in each column head */
+.head-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
 /* People climbing out of the board's top edge: the board sits in front and hides their lower part */
 .board-wrap { position: relative; }
 .board { position: relative; z-index: 1; }
@@ -573,12 +576,26 @@ main { padding: 0 24px 32px; }
   body.sheet-open { overflow: hidden; }
 
   .pool-top { position: sticky; top: 0; z-index: 1; background: var(--page); padding-bottom: 10px; margin-bottom: 4px; }
-  .sheet-head { display: flex; justify-content: center; position: relative; padding: 8px 0 4px; }
-  .grab { width: 40px; height: 4px; border-radius: 2px; background: rgba(15, 25, 35, 0.25); margin-top: 2px; }
+  .sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; position: relative; padding: 18px 0 2px; }
+  .grab { position: absolute; top: 7px; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; border-radius: 2px; background: rgba(15, 25, 35, 0.25); }
+  .sheet-teams { display: flex; gap: 4px; min-width: 0; }
+  .sheet-teams button {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-weight: 700;
+    font-size: 13px;
+    max-width: 40vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .sheet-teams button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .sheet-teams small { font-weight: 600; opacity: 0.75; }
   .sheet-close {
-    position: absolute;
-    right: 0;
-    top: 6px;
+    flex: none;
     border: 0;
     background: var(--ink);
     color: #fff;

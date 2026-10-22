@@ -137,10 +137,12 @@
       const mapId = state.maps[n - 1];
       const banner = mapId ? ` style="--banner:url('assets/maps/${mapId}.png')"` : '';
       return `
-        <div class="col${n === view ? ' shown' : ''}">
+        <div class="col${n === view ? ' shown' : ''}" data-map="${n}">
           <div class="col-head"${banner}>
             <div class="map-title"><span class="map-no">Map 0${n}</span><span class="map-role">${MAP_ROLE[n - 1]}</span></div>
-            ${renderMapSelect(n - 1)}
+            <div class="head-row">
+              ${renderMapSelect(n - 1)}
+            </div>
           </div>
           <div class="band band-a">
             ${renderBans('A' + n)}
@@ -227,6 +229,13 @@
         : '<span class="slot"></span>';
     }
     sheetComp.innerHTML = html;
+
+    // Switch between both teams of the current map without leaving the sheet.
+    const n = mapOf(comp);
+    $('#sheet-teams').innerHTML = ['A', 'B'].map(t => {
+      const c = t + n;
+      return `<button type="button" class="${c === comp ? 'on' : ''}" data-comp="${c}">${esc(teamName(t))} <small>${state.comps[c].length}/${SIZE}</small></button>`;
+    }).join('');
   }
 
   function renderCta() {
@@ -252,6 +261,7 @@
     renderSheetComp();
     renderCta();
     save();
+    document.dispatchEvent(new Event('draft:render'));
   }
 
   /* ---------- Actions ---------- */
@@ -390,6 +400,13 @@
     render();
   });
 
+  $('#sheet-teams').addEventListener('click', e => {
+    const b = e.target.closest('button[data-comp]');
+    if (!b) return;
+    state.active = b.dataset.comp;
+    render();
+  });
+
   sheetComp.addEventListener('click', e => {
     const slot = e.target.closest('.slot.filled');
     if (!slot) return;
@@ -430,6 +447,24 @@
       toast('Clipboard not available');
     }
   });
+
+  // Hook for local add-ons (server.js injects one). render() fires a 'draft:render' event.
+  window.BlenderDraft = {
+    get state() { return state; },
+    agentById,
+    mapById,
+    SIZE,
+    banned,
+    teamName,
+    icon,
+    esc,
+    toast,
+    render,
+    focus(comp) {
+      state.active = comp;
+      view = mapOf(comp);
+    },
+  };
 
   renderChips();
   render();
