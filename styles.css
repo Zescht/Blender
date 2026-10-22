@@ -400,6 +400,49 @@ main { padding: 0 24px 32px; }
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* People climbing out of the board's top edge: the board sits in front and hides their lower part */
+.board-wrap { position: relative; }
+.board { position: relative; z-index: 1; }
+.peekers { display: none; }
+
+@media (min-width: 1500px) {
+  .top { padding-top: 28px; }
+  .title { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .peekers {
+    --peek-h: clamp(130px, 9vw, 172px);
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+  }
+  .peek {
+    position: absolute;
+    bottom: calc(var(--peek-h) * -0.3);
+    height: var(--peek-h);
+    width: auto;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 6px 10px rgba(15, 25, 35, 0.25));
+    transition: translate 0.2s ease;
+    animation: peek-up 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.15) backwards;
+  }
+  .peek:hover { translate: 0 -8px; }
+  /* Positions follow the map columns; clamped so they stay clear of the title and buttons */
+  .peek-1 { left: max(33%, 560px); animation-delay: 0.1s; }
+  .peek-2 { left: min(64.5%, calc(100% - 610px)); animation-delay: 0.25s; }
+  .peek-3 { left: min(78%, calc(100% - 400px)); animation-delay: 0.4s; }
+}
+
+@keyframes peek-up {
+  from { transform: translate(-50%, 65%); }
+  to { transform: translate(-50%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .peek { animation: none; }
+}
+
 /* Narrow screens: stack maps, show team letter inline */
 @media (max-width: 1000px) {
   :root { --slot: clamp(44px, 14vw, 72px); --ban: clamp(24px, 7vw, 34px); }
