@@ -419,8 +419,9 @@ main { padding: 0 24px 32px; }
   }
   .peek {
     position: absolute;
-    bottom: calc(var(--peek-h) * -0.3);
-    height: var(--peek-h);
+    --scale: 1;
+    bottom: calc(var(--peek-h) * var(--scale) * -0.3);
+    height: calc(var(--peek-h) * var(--scale));
     width: auto;
     transform: translateX(-50%);
     filter: drop-shadow(0 6px 10px rgba(15, 25, 35, 0.25));
@@ -428,6 +429,9 @@ main { padding: 0 24px 32px; }
     animation: peek-up 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.15) backwards;
   }
   .peek:hover { translate: 0 -8px; }
+  /* 1 and 3 have less headroom in their image than 2; scale them so all three tops line up */
+  .peek-1 { --scale: 0.89; }
+  .peek-3 { --scale: 0.945; }
   /* Positions follow the map columns; clamped so they stay clear of the title and buttons */
   .peek-1 { left: max(33%, 560px); animation-delay: 0.1s; }
   .peek-2 { left: min(64.5%, calc(100% - 610px)); animation-delay: 0.25s; }
